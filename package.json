@@ -1,0 +1,30 @@
+{
+  "name": "degendesk",
+  "version": "0.1.0",
+  "private": true,
+  "description": "DegenDesk — AI command center for airdrops, mints, wallets, and on-chain ops.",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "lucide-react": "1.14.0",
+    "next": "15.5.18",
+    "react": "19.2.6",
+    "react-dom": "19.2.6"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "autoprefixer": "10.4.20",
+    "postcss": "8.4.49",
+    "tailwindcss": "3.4.17",
+    "typescript": "5.9.3"
+  }
+}
