@@ -16,6 +16,7 @@ export async function mimoComplete(
     messages,
     temperature: options?.temperature ?? 0.3,
     max_tokens: options?.max_tokens ?? 4096,
+    stream: false,
   };
 
   const res = await fetch(`${MIMO_API_BASE}/chat/completions`, {

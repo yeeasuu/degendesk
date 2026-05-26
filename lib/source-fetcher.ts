@@ -6,41 +6,83 @@ export type SourceResult = {
   address: string;
 };
 
+type SourcifyFile = {
+  name: string;
+  path: string;
+  content: string;
+};
+
 export async function fetchSourceCode(
   chainId: number,
   address: string
 ): Promise<SourceResult | null> {
-  const bases = ['full_match', 'partial_match'];
+  // Get metadata first (for contract name + compiler)
+  const metaUrl = `https://repo.sourcify.dev/contracts/full_match/${chainId}/${address}/metadata.json`;
+  const metaRes = await fetch(metaUrl, { redirect: 'follow' });
 
-  for (const matchType of bases) {
-    const url = `https://repo.sourcify.dev/contracts/${matchType}/${chainId}/${address}/metadata.json`;
-    const res = await fetch(url, { redirect: 'follow' });
-    if (!res.ok) continue;
-
-    const metadata = await res.json();
-    if (!metadata?.output?.abi) continue;
-
-    // Extract source code from metadata.sources
-    const sourceEntries = Object.entries(metadata.sources || {});
-    const mainSource =
-      sourceEntries.length > 0
-        ? (sourceEntries[0][1] as { content?: string }).content || ''
-        : '';
-
-    const contractName =
-      metadata?.contractName ||
-      (metadata?.settings?.compilationTarget
-        ? Object.values(metadata.settings.compilationTarget)[0]
-        : 'Unknown');
-
-    return {
-      source: mainSource,
-      contractName: String(contractName),
-      compiler: metadata?.compiler?.version || 'unknown',
-      chainId,
-      address,
-    };
+  if (!metaRes.ok) {
+    // Try partial match
+    const partialUrl = `https://repo.sourcify.dev/contracts/partial_match/${chainId}/${address}/metadata.json`;
+    const partialRes = await fetch(partialUrl, { redirect: 'follow' });
+    if (!partialRes.ok) return null;
   }
 
-  return null;
+  // Get source files
+  const filesUrl = `https://sourcify.dev/server/files/${chainId}/${address}`;
+  const filesRes = await fetch(filesUrl, { redirect: 'follow' });
+
+  if (!filesRes.ok) return null;
+
+  const files: SourcifyFile[] = await filesRes.json();
+
+  // Find the main contract (longest .sol file is usually the main one,
+  // or the one matching compilationTarget)
+  const solFiles = files.filter((f) => f.name.endsWith('.sol') && f.content);
+
+  if (solFiles.length === 0) return null;
+
+  // Get metadata for contract name
+  let contractName = 'Unknown';
+  let compiler = 'unknown';
+
+  if (metaRes.ok) {
+    try {
+      const meta = await metaRes.json();
+      const target = meta?.settings?.compilationTarget;
+      if (target) {
+        contractName = Object.values(target)[0] as string;
+      }
+      compiler = meta?.compiler?.version || 'unknown';
+    } catch {
+      // ignore metadata parse errors
+    }
+  }
+
+  // Find main contract file by matching compilationTarget path
+  let mainFile: SourcifyFile | undefined;
+
+  if (metaRes.ok) {
+    try {
+      const meta = await metaRes.json();
+      const targetPath = Object.keys(meta?.settings?.compilationTarget || {})[0];
+      if (targetPath) {
+        mainFile = solFiles.find((f) => f.path?.includes(targetPath) || f.name === targetPath.split('/').pop());
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  // Fallback: longest file (usually the main contract)
+  if (!mainFile) {
+    mainFile = solFiles.reduce((a, b) => (a.content.length > b.content.length ? a : b));
+  }
+
+  return {
+    source: mainFile.content,
+    contractName,
+    compiler,
+    chainId,
+    address,
+  };
 }
