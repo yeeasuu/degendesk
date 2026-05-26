@@ -1,4 +1,5 @@
 import { ContractScanner } from '@/components/contract-scanner';
+import { AuditScanner } from '@/components/audit-scanner';
 import {
   Activity,
   AlertTriangle,
@@ -61,6 +62,7 @@ export default function Dashboard() {
               ['Command Center', Home],
               ['Mint Hunter', Flame],
               ['Contract Scanner', ScanSearch],
+              ['AI Auditor', ShieldCheck],
               ['Wallet Ops', Wallet],
               ['Gas Strategy', Gauge],
               ['Telegram Commander', RadioTower],
@@ -116,6 +118,8 @@ export default function Dashboard() {
               </div>
 
               <ContractScanner />
+
+              <AuditScanner />
 
               <div className="rounded-[2rem] border border-white/10 bg-[#080d1c]/80 p-5 backdrop-blur-xl">
                 <div className="mb-5 flex items-center justify-between">
