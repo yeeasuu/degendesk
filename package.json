@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "DegenDesk — AI command center for airdrops, mints, wallets, and on-chain ops.",
-  "packageManager": "pnpm@9.15.9",
+  
   "engines": {
     "node": "20.x"
   },
