@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 
 const features = [
+  { tag: 'AI AUDIT', title: 'MiMo Contract Auditor', copy: 'AI-powered deep smart contract analysis. Detects reentrancy, overflow, access control flaws, gas waste, and logic errors — powered by Xiaomi MiMo.', icon: ShieldCheck },
   { tag: 'MINT', title: 'Mint Hunter', copy: 'Track live drops, decode mint functions, simulate calls, and choose gas by network pressure.', icon: Flame },
   { tag: 'AIRDROP', title: 'Airdrop Tracker', copy: 'Watch quests, claims, eligibility windows, and recurring wallet actions from one board.', icon: Radar },
   { tag: 'WALLET', title: 'Wallet Ops', copy: 'Balances, approvals, tx history, safe sends, and agent-wallet execution with gas sanity checks.', icon: Wallet },
@@ -72,6 +73,7 @@ export default function Home() {
           <div className="mb-8 flex flex-wrap gap-3">
             <Badge>AI WEB3 OPS</Badge>
             <Badge>AGENT READY</Badge>
+            <Badge>POWERED BY XIAOMI MIMO</Badge>
           </div>
           <h1 className="max-w-4xl text-5xl font-black leading-[0.98] tracking-[-0.055em] text-white md:text-7xl lg:text-[5.7rem]">
             The degen command desk for mints, wallets, and on-chain ops.
@@ -193,6 +195,43 @@ export default function Home() {
               <p className="mt-3 leading-7 text-slate-400">{copy}</p>
             </article>
           ))}
+        </div>
+      </section>
+
+      <section id="mimo" className="mx-auto max-w-7xl px-6 pb-24">
+        <div className="rounded-[2.5rem] border border-cyan/20 bg-gradient-to-br from-cyan/5 to-violet/5 p-8 md:p-14">
+          <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+            <div>
+              <Badge>NEW · AI POWERED</Badge>
+              <h2 className="mt-5 text-4xl font-black tracking-[-0.04em] text-white md:text-5xl">Smart Contract Auditing, Powered by MiMo</h2>
+              <p className="mt-5 text-lg leading-8 text-slate-300">Paste any contract address or Solidity source code. MiMo AI analyzes for vulnerabilities, gas optimization opportunities, and security best practices — then generates a detailed audit report with severity scores.</p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                {['Reentrancy detection', 'Access control', 'Gas optimization', 'Logic errors', 'Best practices'].map((tag) => (
+                  <span key={tag} className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-bold text-slate-300">{tag}</span>
+                ))}
+              </div>
+              <a href="/dashboard" className="mt-8 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan to-violet px-6 py-3 font-black text-void shadow-neon">
+                Try Free Audit <ArrowRight className="h-4 w-4" />
+              </a>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-[#080d1c]/90 p-6 font-mono text-sm">
+              <div className="mb-4 text-xs text-slate-500">audit-report.sol</div>
+              <div className="space-y-2 text-slate-300">
+                <div><span className="text-acid font-bold">Score:</span> <span className="text-white font-black">72/100</span></div>
+                <div><span className="text-red-400 font-bold">[CRITICAL]</span> Reentrancy in withdraw()</div>
+                <div><span className="text-orange-400 font-bold">[HIGH]</span> Missing access control on setPrice()</div>
+                <div><span className="text-yellow-400 font-bold">[MEDIUM]</span> Unchecked return value</div>
+                <div><span className="text-blue-400 font-bold">[LOW]</span> Solidity version outdated</div>
+                <div className="border-t border-white/10 pt-3 mt-3">
+                  <span className="text-violet font-bold">⚡ Gas:</span> Use calldata instead of memory for read-only params
+                </div>
+              </div>
+              <div className="mt-4 flex items-center gap-2 text-xs text-slate-500">
+                <ShieldCheck className="h-3.5 w-3.5 text-cyan" />
+                Powered by Xiaomi MiMo
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

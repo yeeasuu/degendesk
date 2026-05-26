@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { fetchSourceCode } from '@/lib/source-fetcher';
 import { auditContract } from '@/lib/audit-engine';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
 export const maxDuration = 120; // MiMo analysis can take time
@@ -23,6 +24,16 @@ const CHAINS: Record<string, number> = {
 
 export async function POST(req: NextRequest) {
   try {
+    // Rate limiting (3 free audits/day per IP)
+    const ip = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown';
+    const rateCheck = checkRateLimit(ip);
+    if (!rateCheck.allowed) {
+      return NextResponse.json(
+        { ok: false, error: 'Free limit reached (3/day). Upgrade for unlimited audits.' },
+        { status: 429, headers: { 'X-RateLimit-Remaining': '0', 'X-RateLimit-Reset': String(rateCheck.resetAt) } }
+      );
+    }
+
     const body = await req.json();
     const { source: rawSource, address: rawAddress, chain: rawChain } = body;
 
